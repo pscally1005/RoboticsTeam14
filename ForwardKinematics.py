@@ -20,14 +20,13 @@ def ez():
     ez = np.array(ez)
     return ez
 
-# Define the h vectors for i=1,2,3,4,5,6
+# Define the h vectors for i=1,2,3,4,5
 def h_axis():
     h1 = ez()
-    h2 = ey()
-    h3 = ey()
-    h4 = ey()
-    h5 = ez()
-    h6 = ex()
+    h2 = -1*ey()
+    h3 = -1*ey()
+    h4 = -1*ey()
+    h5 = -1*ez()
 
 # Define the rotation about the x function for given joint angle q
 def rotx(q):
@@ -64,26 +63,26 @@ def identity():
 # User input for joint angles
 def angles():
     q = [0, 0, 0, 0, 0, 0]
-    for i in range (0,6):
-        print("\nEnter angle for joint " + str(i+1) + " in degrees [-90,90]")
+    for i in range (0, len(q)-1):
+        print("\nEnter angle for joint " + str(i+1) + " in degrees [0, 180]")
         q[i] = input()
         valid = False
         while(valid == False) :
             try:
                 q[i] = float(q[i])
-                if -90 <= q[i] <= 90:
+                if 0 <= q[i] <= 180:
                     valid = True
                 else:
                     print("\nERROR: Input is invalid.  Please try again")
-                    print("Enter angle for joint " + str(i+1) + " in degrees [-90,90]")
+                    print("Enter angle for joint " + str(i+1) + " in degrees [0, 180]")
                     q[i] = input()
             except:
                 print("\nERROR: Input is invalid.  Please try again")
-                print("Enter angle for joint " + str(i+1) + " in degrees [-90,90]")
+                print("Enter angle for joint " + str(i+1) + " in degrees [0, 180]")
                 q[i] = input()
 
     print("\nYour joint angles are: [deg]\n")
-    for i in range (0,6):
+    for i in range (0, len(q)-1):
         print("\tJoint " + str(i+1) + ": " + str(q[i]))
     return q
 
@@ -125,50 +124,44 @@ def main():
 
     # Define all i-1 -> i rotations
     R01 = np.array(rotz(q1))
-    R12 = np.array(roty(q2))
-    R23 = np.array(roty(q3))
-    R34 = np.array(roty(q4))
-    R45 = np.array(rotz(q5))
-    R56 = np.array(rotx(q6))
-    R6T = np.array(identity())
+    R12 = np.array(roty(-q2))
+    R23 = np.array(roty(-q3))
+    R34 = np.array(roty(-q4))
+    R45 = np.array(rotx(-q5))
+    R5T = np.array(identity())
 
-    # Define all the joint lengths
-    # FIND THE ACTUAL JOINT LENGTHS
-    l0 = 1
-    l1 = 1
-    l2 = 1
-    l3 = 1
-    l4 = 1
-    l5 = 1
-    l6 = 1
+    # Define all the joint lengths [mm]
+    l0 = 61
+    l1 = 43.5
+    l2 = 82.85
+    l3 = 82.85
+    l4 = 73.85
+    l5 = 54.57
 
     # Define the position vectors from i-1 -> i
     P01 = (l0 + l1) * ez()
     P12 = 0 * ey()
-    P23 = l2 * ez()
-    P34 = l3 * ez()
-    P45 = (l4 + l5 + l6) * ez()
-    P56 = 0 * ez()
-    P6T = 0 * ex()
+    P23 = l2 * ex()
+    P34 = -1*l3 * ez()
+    P45 = 0 * ez()
+    P5T = -1*(l4 + l5) * ex()
 
     # Final rotation matrix 0 -> T
     R02 = np.dot(R01,R12)
     R03 = np.dot(R02,R23)
     R04 = np.dot(R03,R34)
     R05 = np.dot(R04,R45)
-    R06 = np.dot(R05,R56)
-    R0T = np.dot(R06,R6T)
-    
+    R0T = np.dot(R05,R5T)    
 
     # Final position vector 0 -> T
-    P0T = P01 + np.dot(R01,P12) + np.dot(R02,P23) + np.dot(R03,P34) + np.dot(R04,P45) + np.dot(R05,P56) + np.dot(R06,P6T)
+    P0T = P01 + np.dot(R01,P12) + np.dot(R02,P23) + np.dot(R03,P34) + np.dot(R04,P45) + np.dot(R05,P5T)
 
     # Print final rotation
-    print("\nThe final rotation R0T is:\n")# + str(R0T.reshape(3,3)))
+    print("\nThe final rotation R0T is: \n")# + str(R0T.reshape(3,3)))
     # Round R0T to 3 decimal places
     for i in range(0, len(R0T)):
         for j in range(0, len(R0T[i])):
-            if R0T[i][j] == -0:
+            if str(format(R0T[i][j], '.3f')) == "-0.000":
                 R0T[i][j] = 0
             print("\t" + str(format(R0T[i][j], '.3f')), end = "\t")
         print()
@@ -182,7 +175,7 @@ def main():
         print("\t" + str(format(P0T[i][0], '.3f')))
 
     # Print homogenous transform H0T
-    print("\nThe homenous transform H0T is:\n")
+    print("\nThe homogeneous transform H0T is:\n")
     H = homogTransf(R0T, P0T)
     # Round H0T to 3 decimal places
     for i in range(0, len(H)):
