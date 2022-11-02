@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import os
+import sys
 
 # Define the 0 fraom x axis
 def ex():
@@ -105,7 +106,7 @@ def homogTransf(R0T, P0T):
     return H
 
 # Main function for program
-def fwdkin_main():
+def fwdkin_main(q):
 
     # Clear console screen
     clear = lambda: os.system('clear')
@@ -114,13 +115,16 @@ def fwdkin_main():
     print("FORWARD KINEMATICS")
 
     # Define the rotation matrices from i-1 -> i
-    q = angles()
+    #q = angles()
     q1 = q[0]
     q2 = q[1]
     q3 = q[2]
     q4 = q[3]
     q5 = q[4]
-    q6 = q[5]
+    #q6 = q[5]
+    print("\nYour joint angles are: [deg]\n")
+    for i in range (0, len(q)):
+        print("\tJoint " + str(i+1) + ": " + str(q[i]))
 
     # Define all i-1 -> i rotations
     R01 = np.array(rotz(q1))
@@ -188,4 +192,13 @@ def fwdkin_main():
     print("\n------------")
 
 if __name__ == "__main__" :
-    fwdkin_main()
+    if len(sys.argv) != 6 :
+        print("ERROR: Must input 5 joint angles")
+    else:
+        q = np.zeros(len(sys.argv)-1)
+        for i in range(0,len(q)):
+            q[i] = sys.argv[i+1]
+
+        for i in range(0,len(q)):
+            print(q[i])
+        fwdkin_main(q)
