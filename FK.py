@@ -198,4 +198,7 @@ if __name__ == "__main__" :
         q = np.zeros(len(sys.argv)-1)
         for i in range(0,len(q)):
             q[i] = sys.argv[i+1]
+
+        for i in range(0,len(q)):
+            print(q[i])
         fwdkin_main(q)
