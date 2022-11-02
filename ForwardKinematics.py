@@ -105,7 +105,7 @@ def homogTransf(R0T, P0T):
     return H
 
 # Main function for program
-def main():
+def fwdkin_main():
 
     # Clear console screen
     clear = lambda: os.system('clear')
@@ -183,9 +183,9 @@ def main():
             print("\t" + str(format(H[i][j], '.3f')), end = "\t")
         print()
 
-
     # End of Code
+    return R0T, P0T
     print("\n------------")
 
 if __name__ == "__main__" :
-    main()
+    fwdkin_main()
