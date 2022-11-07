@@ -8,21 +8,28 @@ import general_robotics_toolbox as rox
 
 # Given rotation matrix
 def rotation():
-    Rd = [ [-0.75, -0.1047, -0.6531], [-0.433, 0.8241, 0.3652], [0.5, 0.5567, -0.6634]]
-    Rd = np.array(Rd)
+    # Rd = [ [-0.75, -0.1047, -0.6531], [-0.433, 0.8241, 0.3652], [0.5, 0.5567, -0.6634]]
+    # Rd = np.array(Rd)
+    Rd = np.array(np.eye(3))
+    print("\nDesired Rotation\n" + str(Rd))
     return Rd
 
 # Given position vector
 def position():
-    Pd = [[0.2058], [0.1188], [0.1464]]
-    Pd = np.array(Pd)
+    # Pd = [[0.2058], [0.1188], [0.1464]]
+    # Pd = np.array(Pd)
+    Pd = np.array([[-45.570 * 10**-3], [0], [21.650 * 10**-3]])
+    print("\nDesired Position [m]\n" + str(Pd))
     return Pd
 
 # Given joint angles
 def joints():
-    q0 = np.transpose([25, 50, 75, 30, 30])
-    q0 = np.array(q0)
-    q0 = q0 * math.pi / 180
+    # q0 = np.transpose([25, 50, 75, 30, 30])
+    # q0 = np.array(q0)
+    # q0 = q0 * math.pi / 180
+    q0 = np.array([10] * 5)
+    print("\nInitial Guess [deg]\n" + str(q0))
+    q0 = q0 * math.pi/180
     return q0
 
 # Given tolerance
@@ -66,9 +73,6 @@ def jacobian_inverse(robot,q0,Rd,Pd,Nmax,alpha,tol):
         else:
             break
 
-    # print("\n" + str(p0T) + "\n")
-    # print("\n" + str(Pd) + "\n")    
-    # print("\n" + str(p0T-Pd) + "\n")
     return q[:, iternum]
 
 # Main function
@@ -76,7 +80,8 @@ def main():
 
     clear = lambda: os.system('clear')
     clear()
-    print("Jacobian Inverse")
+    print("------------")
+    print("INVERSE KINEMATICS")
 
     # Given values in problem statement
     Rd = rotation()
@@ -113,10 +118,11 @@ def main():
     robot = rox.Robot(H, P, joint_type)
     q = jacobian_inverse(robot,q0,Rd,Pd,Nmax,alpha,tol)
     q = q * 180 / math.pi
-    print("\nOutput joint angles:\n" + str(q))
+    print("\nOutput joint angles [deg]:\n" + str(q))
     
     # Htest = fwdkin(robot, q*math.pi/180)
     # print("\n" + str(Htest))
+    return q
 
 if __name__ == "__main__" :
     main()
