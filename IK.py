@@ -32,7 +32,6 @@ def tolerance():
 
 # Jacobian inverse
 def jacobian_inverse(robot,q0,Rd,Pd,Nmax,alpha,tol):
-   
     n = len(q0)
     q = np.zeros((n, Nmax+1))
     q[:,0] = q0
