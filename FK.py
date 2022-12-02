@@ -10,7 +10,6 @@ def rotx(q):
     q = q * math.pi / 180
     R = [[1, 0, 0], [0, math.cos(q), -1*math.sin(q)], [0, math.sin(q), math.cos(q)]]
     R = np.array(R)
-    #print(str(R.reshape(3,3)) + "\n")
     return R.reshape(3,3)
 
 # Define the rotation about the y function for given joint angle q
@@ -19,7 +18,6 @@ def roty(q):
     q = q * math.pi / 180
     R = [[math.cos(q), 0, math.sin(q)], [0, 1, 0], [-1*math.sin(q), 0, math.cos(q)]]
     R = np.array(R)
-    #print(str(R.reshape(3,3)) + "\n")
     return R.reshape(3,3)
 
 # Define the rotation about the z function for given joint angle q
@@ -28,18 +26,10 @@ def rotz(q):
     q = q * math.pi / 180
     R = [[math.cos(q), -1*math.sin(q), 0], [math.sin(q), math.cos(q), 0], [0, 0, 1]]
     R = np.array(R)
-    #print(str(R.reshape(3,3)) + "\n")
     return R.reshape(3,3)
     
 # FORWARD KINEMATICS
 def fwdkin(q):
-
-    # Clear console screen
-    clear = lambda: os.system('clear')
-    clear()
-    print("------------")
-    print("FORWARD KINEMATICS")
-
     # Original axes
     ex = np.array([[1], [0], [0]])
     ey = np.array([[0], [1], [0]])
@@ -51,10 +41,6 @@ def fwdkin(q):
     q3 = q[2]
     q4 = q[3]
     q5 = q[4]
-    #q6 = q[5]
-    print("\nYour joint angles are: [deg]\n")
-    for i in range (0, len(q)):
-        print("\tJoint " + str(i+1) + ": " + str(q[i]))
 
     # Define all i-1 -> i rotations
     R01 = np.array(rotz(q1))
@@ -89,30 +75,13 @@ def fwdkin(q):
 
     # Final position vector 0 -> T
     P0T = P01 + np.dot(R01,P12) + np.dot(R02,P23) + np.dot(R03,P34) + np.dot(R04,P45) + np.dot(R05,P5T)
-
-    # Print final rotation
-    print("\nThe final rotation R0T is: \n")# + str(R0T.reshape(3,3)))
-    # Round R0T to 3 decimal places
-    for i in range(0, len(R0T)):
-        for j in range(0, len(R0T[i])):
-            if str(format(R0T[i][j], '.3f')) == "-0.000":
-                R0T[i][j] = 0
-            print("\t" + str(format(R0T[i][j], '.3f')), end = "\t")
-        print()
-
-    # Print final position
-    print("\nThe final position P0T is: [m]\n")# + str(P0T.reshape(3,1)))
-    # Round P0T to 3 decimal places
-    for i in range(0, len(P0T)):
-        if P0T[i] == -0:
-            P0T[i] = 0
-        print("\t" + str(format(P0T[i][0], '.3f')))
-
-    # End of Code
-    print("\n------------")
+    
     return R0T, P0T
 
 def main():
+    clear = lambda: os.system('clear')
+    clear()
+
     print("Enter the 5 joint angles")
     print("Format: q1,q2,q3,q4,q5")
     desired = input()
@@ -124,7 +93,8 @@ def main():
         except:
             print("ERROR: Joint angles invalid")
             sys.exit(0)
-    fwdkin(q)
+    R, P = fwdkin(q)
+    print("\n" + str(R) + "\n\n" + str(P))
     sys.exit(1)
 
 if __name__ == "__main__" :
